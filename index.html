@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>BLR Road Quality Map</title>
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"/>
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"></script>
+
+<style> 
+        body {
+            padding: 0;
+            margin: 0;
+        }
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .leaflet-control {
+            padding: 6px 8px;
+            font: 14px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            /*box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);*/
+            /*border-radius: 5px;*/
+            line-height: 24px;
+            color: #555;
+        }
+
+        .leaflet-control h4 {
+          text-align: center;
+          font-size: 16px;
+          margin: 2px 12px 8px;
+          color: #777;
+        }
+        
+        .leaflet-control i {
+          width: 18px;
+          height: 18px;
+          float: left;
+          margin: 0 8px 0 0;
+          opacity: 0.7;
+        }
+        
+        .leaflet-control i.icon {
+          background-size: 18px;
+          background-color: rgba(255, 255, 255, 1);
+        }
+
+        .intro {
+            padding: 6px 8px;
+            font: 14px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            /*box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);*/
+            /*border-radius: 5px;*/
+            line-height: 24px;
+            color: #555;
+            max-width: 35%;
+        }
+</style>
+
+</head>
+
+<body>
+
+    <div id="map">
+    </div>
+
+<script>
+function style(feature) {
+    switch (feature.properties.smoothness) {
+        case 'excellent': return {color: "#1f78b4"};
+        case 'good':   return {color: "#33a02c"};
+        case 'intermediate':   return {color: "#ffff33"};
+        case 'bad':   return {color: "#e31a1c"};
+    }
+}
+
+var map = L.map('map').setView([12.9888,77.6218], 10);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+    minZoom: 9,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors. <a href="https://www.openstreetmap.org/fixthemap">Edit the Map</a>',
+    opacity: 0.5,
+    maxBoundsViscosity: 0.9
+}).addTo(map);
+
+var geojson = new L.GeoJSON.AJAX("blr-road-quality.geojson");
+
+/*Intro specific*/
+var intro = L.control({ position: "topright" });
+
+intro.onAdd = function(map) {
+  var div = L.DomUtil.create("div", "intro");
+  div.innerHTML += "<h4>What is this?</h4>";
+    div.innerHTML += "This map is a visualization of road quality in BLR, using data from <a href='https://openstreetmap.org'>OpenStreetMap</a>. To add information about a road and for more details, refer the <a href='https://github.com/Vonter/blr-road-quality'>documentation.</a>";
+  return div;
+};
+
+intro.addTo(map);
+
+var types = ['excellent', 'good', 'intermediate', 'bad'];
+var layerControl = L.control.layers(null, null, {collapsed: false, position: "bottomleft"});
+
+var promise = $.getJSON("blr-road-quality.geojson");
+    promise.then(function(data) {
+        types.forEach(function(type) {
+            var layer = L.geoJson(data, {
+                filter: function(feature) {
+                    return feature.properties.smoothness == type;
+                },
+                style: style
+            });
+            layerControl.addOverlay(layer, type);
+            map.addLayer(layer);
+        });
+    });
+
+layerControl.addTo(map);
+
+let layerControlContainer = document.querySelector('.leaflet-control-layers-list');
+let layerOverlays = document.querySelector('.leaflet-control-layers-overlays');
+let myInsert = document.createElement('span');
+myInsert.innerHTML = '<h4>Road Quality</h4>';
+layerControlContainer.insertBefore(myInsert, layerOverlays);
+
+map.setMaxBounds(map.getBounds());
+map.setZoom(11);
+</script>
+
+</body>
+
+</html>
