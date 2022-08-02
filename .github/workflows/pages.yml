@@ -9,6 +9,10 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+  # Run on a schedule (daily)
+  schedule:
+    - cron: '0 0 * * *'
+
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
@@ -30,6 +34,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Get latest OSM data
+        run: chmod +x overpass-query.sh && bash overpass-query.sh
       - name: Setup Pages
         uses: actions/configure-pages@v1
       - name: Upload artifact
