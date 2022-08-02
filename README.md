@@ -2,6 +2,8 @@
 
 A map to visualize the quality of roads in Bengaluru, using data from [OpenStreetMap](https://openstreetmap.in).
 
+[![Site Deployment](https://github.com/Vonter/blr-road-quality/actions/workflows/pages.yml/badge.svg?branch=main)](https://github.com/Vonter/blr-road-quality/actions/workflows/pages.yml)
+
 ### Motivation
 
 Inspired by [a post on Skyscraper City](https://www.skyscrapercity.com/threads/bengaluru-roads-flyovers-underpasses.1025435/post-179718345) and my time spent on the roads of Bengaluru.
