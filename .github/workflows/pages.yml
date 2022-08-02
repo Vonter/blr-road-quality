@@ -34,6 +34,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Install node
+        uses: actions/setup-node@v1
+        with:
+            node-version: 16
+      - name: Install node dependencies
+        run: npm install -g osmtogeojson
       - name: Get latest OSM data
         run: chmod +x overpass-query.sh && bash overpass-query.sh
       - name: Setup Pages
