@@ -71,12 +71,18 @@
     </div>
 
 <script>
-function style(feature) {
+function styleSmoothness(feature) {
     switch (feature.properties.smoothness) {
         case 'excellent': return {color: "#1f78b4"};
         case 'good':   return {color: "#33a02c"};
         case 'intermediate':   return {color: "#ffff33"};
         case 'bad':   return {color: "#e31a1c"};
+    }
+}
+
+function styleFlood(feature) {
+    switch (feature.properties.flood_prone) {
+        case 'yes': return {color: "#0000ff"};
     }
 }
 
@@ -105,7 +111,7 @@ intro.onAdd = function(map) {
 intro.addTo(map);
 
 var types = ['excellent', 'good', 'intermediate', 'bad'];
-var layerControl = L.control.layers(null, null, {collapsed: false, position: "bottomleft"});
+var qualityLayerControl = L.control.layers(null, null, {collapsed: false, position: "bottomleft"});
 
 var promise = $.getJSON("blr-road-quality.geojson");
     promise.then(function(data) {
@@ -114,14 +120,26 @@ var promise = $.getJSON("blr-road-quality.geojson");
                 filter: function(feature) {
                     return feature.properties.smoothness == type;
                 },
-                style: style
+                style: styleSmoothness
             });
-            layerControl.addOverlay(layer, type);
+            qualityLayerControl.addOverlay(layer, type);
             map.addLayer(layer);
         });
     });
 
-layerControl.addTo(map);
+var promise = $.getJSON("blr-road-quality.geojson");
+    promise.then(function(data) {
+        var layer = L.geoJson(data, {
+            filter: function(feature) {
+                return feature.properties.flood_prone == 'yes';
+            },
+            style: styleFlood
+        });
+        qualityLayerControl.addOverlay(layer, "flood_prone");
+        map.addLayer(layer);
+    });
+
+qualityLayerControl.addTo(map);
 
 let layerControlContainer = document.querySelector('.leaflet-control-layers-list');
 let layerOverlays = document.querySelector('.leaflet-control-layers-overlays');
