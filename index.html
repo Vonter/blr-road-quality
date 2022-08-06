@@ -120,7 +120,10 @@ var promise = $.getJSON("blr-road-quality.geojson");
                 filter: function(feature) {
                     return feature.properties.smoothness == type;
                 },
-                style: styleSmoothness
+                style: styleSmoothness,
+                onEachFeature: function (feature, layer) {
+                    layer.bindTooltip('Properties: <br><pre>' + JSON.stringify(feature.properties, null, 4))
+                }
             });
             qualityLayerControl.addOverlay(layer, type);
             map.addLayer(layer);
@@ -133,7 +136,10 @@ var promise = $.getJSON("blr-road-quality.geojson");
             filter: function(feature) {
                 return feature.properties.flood_prone == 'yes';
             },
-            style: styleFlood
+            style: styleFlood,
+            onEachFeature: function (feature, layer) {
+                layer.bindTooltip('Properties: <br><pre>' + JSON.stringify(feature.properties, null, 4))
+            }
         });
         qualityLayerControl.addOverlay(layer, "flood_prone");
         map.addLayer(layer);
