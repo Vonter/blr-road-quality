@@ -10,6 +10,8 @@ Inspired by [a post on Skyscraper City](https://www.skyscrapercity.com/threads/b
 
 ### Contribution Guide
 
+##### Using StreetComplete
+
 ##### Create an Issue
 
 [Submit a new issue](https://github.com/Vonter/india-polling-stations/issues/new) with details about:
